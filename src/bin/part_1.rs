@@ -1,13 +1,12 @@
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
+use std::io::{BufRead, BufReader};
+
+use aoc_utils::files::{read_file, resolve_path};
 
 fn main() {
     println!("Part 1 - Day 1");
 
-    let file_path = "src/bin/input-day-1.txt";
-    let file = File::open(file_path);
+    let rel_file_path = "src/bin/input-day-1.txt";
+    let file = read_file(&resolve_path(rel_file_path));
 
     let mut result: i32 = 0;
 
