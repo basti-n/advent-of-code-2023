@@ -1,9 +1,6 @@
 extern crate aoc_utils;
 
-use std::{
-    collections::HashMap,
-    io::{BufRead, BufReader},
-};
+use std::io::{BufRead, BufReader};
 
 use aoc_utils::files::{read_file, resolve_path};
 
@@ -16,49 +13,16 @@ fn main() {
 fn process(rel_file_path: &str) -> u32 {
     let file = read_file(&resolve_path(rel_file_path));
 
-    let file_1 = read_file(&resolve_path(rel_file_path));
-    let reader_1 = BufReader::new(file_1.expect("Unit"));
-    let len = reader_1.lines().into_iter().count();
-
-    let mut map: HashMap<usize, u32> = HashMap::new();
-
+    let mut sum = 0;
     match file {
         Ok(file) => {
             let reader = BufReader::new(file);
-
-            let r = reader.lines().into_iter();
-            for (index, line) in r.enumerate() {
-                println!("Line[INDEX]: {:?}", index);
+            for (_index, line) in reader.lines().into_iter().enumerate() {
                 let game_info = match &line {
                     Ok(l) => {
                         let parsed_line = parse_line(&l);
                         let line_sum = calculate_line_sum(parsed_line);
-                        if line_sum > 0 {
-                            let b = 1 + index + line_sum as usize;
-                            for i in index..b {
-                                let idx = i as usize;
-                                if idx <= len {
-                                    match map.get(&idx) {
-                                        Some(nested_v) => {
-                                            let prev_value = match map.get(&(idx - 1)) {
-                                                Some(v) => {
-                                                    if *v > 0 {
-                                                        1
-                                                    } else {
-                                                        0
-                                                    }
-                                                }
-                                                None => 0,
-                                            };
-                                            map.insert(idx, nested_v + prev_value);
-                                        }
-                                        None => {
-                                            map.insert(idx, 1);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        sum += line_sum;
                     }
                     Err(e) => {
                         println!("Error reading line: {}", e);
@@ -73,8 +37,7 @@ fn process(rel_file_path: &str) -> u32 {
         }
     }
 
-    println!("Map: {:?}", map);
-    map.iter().fold(0, |acc, (_, v)| acc + v)
+    sum
 }
 
 fn calculate_line_sum(line: Vec<Vec<u64>>) -> u32 {
@@ -132,6 +95,6 @@ mod tests {
 
     #[test]
     fn test_process() {
-        assert_eq!(process("src/bin/input-test-day-4.txt"), 30);
+        assert_eq!(process("src/bin/input-test-day-4.txt"), 13);
     }
 }
